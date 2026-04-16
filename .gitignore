@@ -1,0 +1,37 @@
+﻿# --- [빌드 결과물 및 임시 파일] ---
+# CMake가 생성하는 빌드 폴더 (보통 out/ 또는 build/)
+out/
+build/
+bin/
+lib/
+
+# --- [CMake 관련 파일] ---
+# 로컬 빌드 설정 및 캐시 파일
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+Testing/
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps/
+
+# --- [Visual Studio / IDE 관련] ---
+# VS 구성 및 로컬 설정 (.vs 폴더)
+.vs/
+*.user
+*.sln
+*.vcxproj
+*.filters
+*.aps
+*.pdb
+*.ilk
+*.exe
+*.obj
+
+# --- [기타 운영체제 및 로그] ---
+.DS_Store
+*.log
+*.tmp
