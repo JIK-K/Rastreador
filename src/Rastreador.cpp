@@ -1,34 +1,48 @@
 ﻿#include <iostream>
 #include <thread>
 #include <chrono>
-#include <iomanip> // 출력 포맷팅을 위해 필요
+#include <iomanip> 
 #include "collector/SystemMonitor.hpp"
+#include "collector/ProcessMonitor.hpp"
 
 int main() {
-    // 1. 수집기 생성
-    SystemMonitor monitor;
+    SystemMonitor sysMon;
+    ProcessMonitor procMon;
 
-    std::cout << "==========================================" << std::endl;
-    std::cout << "   System Monitor Test (1초 주기로 수집)   " << std::endl;
-    std::cout << "==========================================" << std::endl;
-    std::cout << "  CPU(%)  |  MEM(GB)  |  NET(MB/s)  " << std::endl;
-    std::cout << "------------------------------------------" << std::endl;
+    std::cout << "======================================================" << std::endl;
+    std::cout << "       Download Monitor 통합 수집 테스트 시작          " << std::endl;
+    std::cout << "======================================================" << std::endl;
 
-    // 무한 루프로 1초마다 데이터 찍어보기
     while (true) {
-        // 데이터 수집 수행
-        monitor.collect();
+        sysMon.collect();
+        procMon.collect();
 
-        // 수집된 데이터 가져오기
-        CollectorData data = monitor.getData();
+        CollectorData sysData = sysMon.getData();
+        auto procNetMap = procMon.getProcessNetUsage();
 
-        // 화면 출력 (소수점 2자리까지 깔끔하게)
-        std::cout << std::fixed << std::setprecision(2)
-            << "  " << std::setw(6) << data.cpuUsage << "%  |  "
-            << std::setw(7) << data.memUsage << " GB |  "
-            << std::setw(8) << data.netSpeed << " MB/s" << std::endl;
+        // 2. 시스템 전체 정보 출력
+        std::cout << "\n[시스템 상태] "
+            << "CPU: " << std::fixed << std::setprecision(1) << sysData.cpuUsage << "% | "
+            << "MEM: " << sysData.memUsage << "GB | "
+            << "NET 합계: " << sysData.netSpeed << "MB/s" << std::endl;
 
-        // 1초 대기 (1000ms)
+        // 3. 네트워크 사용 중인 프로세스 목록 출력
+        std::cout << "[통신 중인 앱 목록]" << std::endl;
+        if (procNetMap.empty()) {
+            std::cout << "  - 현재 통신 중인 프로세스 없음" << std::endl;
+        }
+        else {
+            int count = 0;
+            for (auto const& [name, usage] : procNetMap) {
+                // 너무 많으면 지저분하니까 상위 몇 개만 보거나, 
+                // 지금은 표시용 1.0f가 들어간 놈들을 다 출력해봅니다.
+                std::cout << "  ▶ " << std::left << std::setw(20) << name;
+                if (++count % 3 == 0) std::cout << "\n"; // 3개마다 줄바꿈
+            }
+        }
+        std::cout << "\n------------------------------------------------------" << std::endl;
+
+        // 1초 대기
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     }
 

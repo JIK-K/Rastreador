@@ -17,7 +17,7 @@ include_directories(include)
 add_executable (Rastreador
 	"src/Rastreador.cpp"
 	"src/collector/SystemMonitor.cpp"
-)
+	"src/collector/ProcessMonitor.cpp")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET Rastreador PROPERTY CXX_STANDARD 20)
@@ -26,3 +26,5 @@ endif()
 
 # TODO: 필요한 경우 테스트를 추가하고 대상을 설치합니다.
 target_link_libraries(Rastreador PRIVATE pdh)
+target_link_libraries(Rastreador PRIVATE iphlpapi)
+# target_link_libraries(Rastreador PRIVATE pdh iphlpapi ws2_32)

@@ -3,6 +3,6 @@
 
 class IDisplay {
 public:
-	virtual ~IDIsplay() = defalut;
+	virtual ~IDisplay() = default;
 	virtual void render(const CollectorData& data, const AnalysisResult& result) = 0;
 };
