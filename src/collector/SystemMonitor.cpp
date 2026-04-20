@@ -17,10 +17,10 @@ void SystemMonitor::queryPDH() {
     }
 
     // CPU 전체 사용량.
-    PdhAddCounter(m_hQuery, "\\Processor(_Total)\\% Processor Time", NULL, &m_CpuCounter);
+    PdhAddCounter(m_hQuery, L"\\Processor(_Total)\\% Processor Time", NULL, &m_CpuCounter);
 
     // 네트워크 수신 속도 (와일드카드 *는 모든 랜카드를 뜻함)
-    PdhAddCounter(m_hQuery, "\\Network Interface(*)\\Bytes Received/sec", NULL, &m_NetCounter);
+    PdhAddCounter(m_hQuery, L"\\Network Interface(*)\\Bytes Received/sec", NULL, &m_NetCounter);
 
     // 기준점(T1)을 잡기 위해 첫 번째 수집을 실행합
     PdhCollectQueryData(m_hQuery);
