@@ -11,11 +11,23 @@ endif()
 
 project ("Rastreador")
 
+include_directories(include)
+add_definitions(-D_WIN32_WINNT=0x0602 -DUNICODE -D_UNICODE)
+
 # 이 프로젝트의 실행 파일에 소스를 추가합니다.
-add_executable (Rastreador "Rastreador.cpp" "Rastreador.h")
+add_executable (Rastreador
+	"src/Rastreador.cpp"
+	"src/collector/SystemMonitor.cpp"
+	"src/collector/ProcessMonitor.cpp"
+	"src/collector/ETWMonitor.cpp"
+	"src/analyzer/BottleneckAnalyzer.cpp"
+	"src/display/ConsoleDisplay.cpp"
+	"src/core/Monitor.cpp")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET Rastreador PROPERTY CXX_STANDARD 20)
 endif()
 
+
 # TODO: 필요한 경우 테스트를 추가하고 대상을 설치합니다.
+target_link_libraries(Rastreador PRIVATE pdh iphlpapi psapi ws2_32 tdh advapi32)
