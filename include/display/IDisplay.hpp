@@ -4,5 +4,7 @@
 class IDisplay {
 public:
 	virtual ~IDisplay() = default;
-	virtual void render(const CollectorData& data, const AnalysisResult& result) = 0;
+	virtual void render(const CollectorData& data,
+		const std::map<std::string, float>& procNet,
+		const AnalysisResult& result) = 0;
 };

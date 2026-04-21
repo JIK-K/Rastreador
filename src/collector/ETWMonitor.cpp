@@ -1,4 +1,4 @@
-#include "collector/ETWMonitor.hpp"
+﻿#include "collector/ETWMonitor.hpp"
 #include <iostream>
 #include <evntprov.h>
 
@@ -41,9 +41,6 @@ bool ETWMonitor::start() {
     prop->LoggerNameOffset = sizeof(EVENT_TRACE_PROPERTIES);
     prop->EnableFlags = EVENT_TRACE_FLAG_NETWORK_TCPIP;
 
-    std::cout << "[ETW] EnableFlags: " << prop->EnableFlags << std::endl;
-    std::cout << "[ETW] EVENT_TRACE_FLAG_NETWORK_TCPIP: " << EVENT_TRACE_FLAG_NETWORK_TCPIP << std::endl;
-
     ControlTraceW(0, KERNEL_LOGGER_NAME, prop, EVENT_TRACE_CONTROL_STOP);
 
     ULONG ret = StartTraceW(&m_hSession, KERNEL_LOGGER_NAME, prop);
@@ -56,7 +53,6 @@ bool ETWMonitor::start() {
     // StartTraceW가 EnableFlags를 덮어쓰므로 다시 설정 후 업데이트
     prop->EnableFlags = EVENT_TRACE_FLAG_NETWORK_TCPIP;
     ULONG updateRet = ControlTraceW(m_hSession, nullptr, prop, EVENT_TRACE_CONTROL_UPDATE);
-    std::cout << "[ETW] ControlTrace UPDATE ret: " << updateRet << std::endl;
 
     // delete 하지 말고 멤버로 유지
     if (ret != ERROR_SUCCESS && ret != ERROR_ALREADY_EXISTS) {
@@ -72,14 +68,11 @@ bool ETWMonitor::start() {
     m_pLogFile->EventRecordCallback = eventCallback;
 
     m_hTrace = OpenTrace(m_pLogFile);
-    std::cout << "[ETW] OpenTrace handle: " << m_hTrace << std::endl;
-    std::cout << "[ETW] GetLastError: " << GetLastError() << std::endl;
     if (m_hTrace == INVALID_PROCESSTRACE_HANDLE) {
         std::cerr << "[ETW] OpenTrace FAIL" << std::endl;
         return false;
     }
 
-    std::cout << "[ETW] m_hTrace: " << m_hTrace << std::endl;
 
     static TRACEHANDLE s_hTrace;
     s_hTrace = m_hTrace;
@@ -93,8 +86,6 @@ bool ETWMonitor::start() {
         },
         this, 0, nullptr
     );
-    std::cout << "[ETW] Thread created: " << (m_hThread != nullptr) << std::endl;
-    std::cout << "[ETW] Thread ID: " << GetThreadId(m_hThread) << std::endl;
 
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
     std::cout << "[ETW] Session Start Complete" << std::endl;

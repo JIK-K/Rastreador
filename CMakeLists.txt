@@ -19,7 +19,10 @@ add_executable (Rastreador
 	"src/Rastreador.cpp"
 	"src/collector/SystemMonitor.cpp"
 	"src/collector/ProcessMonitor.cpp"
-	"src/collector/ETWMonitor.cpp" "src/analyzer/BottleneckAnalyzer.cpp")
+	"src/collector/ETWMonitor.cpp"
+	"src/analyzer/BottleneckAnalyzer.cpp"
+	"src/display/ConsoleDisplay.cpp"
+	"src/core/Monitor.cpp")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET Rastreador PROPERTY CXX_STANDARD 20)
