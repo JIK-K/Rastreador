@@ -11,6 +11,7 @@ public:
 
 	void render(const CollectorData& sysData,
 		const std::map<std::string, float>& procNet,
+		const std::map<std::string, ProcessInfo>& procInfo,
 		const AnalysisResult& result);
 	void clear();
 

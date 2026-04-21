@@ -1,18 +1,27 @@
-﻿#include <iostream>
-#include <thread>
-#include <chrono>
-#include <iomanip> 
-#include "collector/SystemMonitor.hpp"
-#include "collector/ProcessMonitor.hpp"
-#include "analyzer/BottleneckAnalyzer.hpp"
+﻿#include "core/Monitor.hpp"
 #include "display/ConsoleDisplay.hpp"
-#include "core/Monitor.hpp"
+#include "display/OverlayDisplay.hpp"
+#include <iostream>
 
 int main() {
-    ConsoleDisplay display;
-    Monitor monitor(&display, 100.0f);
+    std::cout << "[Rastreador]\n";
+    std::cout << "1. 콘솔 모드\n";
+    std::cout << "2. 오버레이 모드\n";
+    std::cout << "선택 (1/2): ";
 
-    monitor.start();
+    int choice = 1;
+    std::cin >> choice;
+
+    if (choice == 2) {
+        OverlayDisplay display;
+        Monitor monitor(&display, 100.0f);
+        monitor.start();
+    }
+    else {
+        ConsoleDisplay display;
+        Monitor monitor(&display, 100.0f);
+        monitor.start();
+    }
 
     return 0;
 }

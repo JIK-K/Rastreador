@@ -33,6 +33,7 @@ private:
 
 	CollectorData m_sysData;
 	std::map<std::string, float> m_procNet;
+	std::map<std::string, ProcessInfo> m_procInfo;
 	AnalysisResult m_result;
 
 	std::mutex m_mutex;

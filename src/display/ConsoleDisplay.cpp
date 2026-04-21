@@ -22,6 +22,7 @@ void ConsoleDisplay::clear() {
 void ConsoleDisplay::render(
     const CollectorData& sysData,
     const std::map<std::string, float>& procNet,
+    const std::map<std::string, ProcessInfo>& procInfo,
     const AnalysisResult& result)
 {
     if (m_firstRender) {
@@ -61,6 +62,17 @@ void ConsoleDisplay::render(
         << sysData.cpuUsage << " %\033[K\n";
     std::cout << "MEM  " << std::setw(6) << std::setprecision(1)
         << sysData.memUsage << " GB\033[K\n";
+
+    if (!procInfo.empty()) {
+        auto topMem = std::max_element(procInfo.begin(), procInfo.end(),
+            [](const auto& a, const auto& b) {
+                return a.second.memUsage < b.second.memUsage;
+            });
+        std::cout << "  ▶ " << std::left << std::setw(20) << topMem->first
+            << std::right << std::setw(6) << std::setprecision(1)
+            << topMem->second.memUsage << " MB\033[K\n";
+    }
+
     std::cout << "─────────────────────────────────────────\033[K\n";
     std::cout << "  ▶ " << result.message << "\033[K\n";
 

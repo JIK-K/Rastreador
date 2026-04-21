@@ -22,6 +22,7 @@ add_executable (Rastreador
 	"src/collector/ETWMonitor.cpp"
 	"src/analyzer/BottleneckAnalyzer.cpp"
 	"src/display/ConsoleDisplay.cpp"
+	"src/display/OverlayDisplay.cpp"
 	"src/core/Monitor.cpp")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
