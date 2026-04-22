@@ -1,34 +1,52 @@
-﻿# CMakeList.txt: Rastreador에 대한 CMake 프로젝트, 여기에 소스를 포함하고
-# 프로젝트 특정 논리를 정의합니다.
-#
-cmake_minimum_required (VERSION 3.10)
+﻿cmake_minimum_required(VERSION 3.10)
 
-# 지원되는 경우 MSVC 컴파일러에 대해 핫 다시 로드 사용하도록 설정합니다.
-if (POLICY CMP0141)
+if(POLICY CMP0141)
   cmake_policy(SET CMP0141 NEW)
-  set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<IF:$<AND:$<C_COMPILER_ID:MSVC>,$<CXX_COMPILER_ID:MSVC>>,$<$<CONFIG:Debug,RelWithDebInfo>:EditAndContinue>,$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>>")
+  set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT
+    "$<IF:$<AND:$<C_COMPILER_ID:MSVC>,$<CXX_COMPILER_ID:MSVC>>,$<$<CONFIG:Debug,RelWithDebInfo>:EditAndContinue>,$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>>")
 endif()
 
-project ("Rastreador")
+project("Rastreador")
 
-include_directories(include)
-add_definitions(-D_WIN32_WINNT=0x0602 -DUNICODE -D_UNICODE)
+# 인클루드 경로
+include_directories(include resources)
+add_compile_options(/utf-8)
+# 전처리기 정의
+add_definitions(
+    -D_WIN32_WINNT=0x0602
+    -DUNICODE
+    -D_UNICODE
+)
 
-# 이 프로젝트의 실행 파일에 소스를 추가합니다.
-add_executable (Rastreador
-	"src/Rastreador.cpp"
-	"src/collector/SystemMonitor.cpp"
-	"src/collector/ProcessMonitor.cpp"
-	"src/collector/ETWMonitor.cpp"
-	"src/analyzer/BottleneckAnalyzer.cpp"
-	"src/display/ConsoleDisplay.cpp"
-	"src/display/OverlayDisplay.cpp"
-	"src/core/Monitor.cpp" "src/tray/TrayIcon.cpp")
+# 소스 파일
+add_executable(Rastreador
+    "src/Rastreador.cpp"
+    "src/collector/SystemMonitor.cpp"
+    "src/collector/ProcessMonitor.cpp"
+    "src/collector/ETWMonitor.cpp"
+    "src/analyzer/BottleneckAnalyzer.cpp"
+    "src/display/OverlayDisplay.cpp"
+    "src/core/Monitor.cpp"
+    "src/tray/TrayIcon.cpp"
+    "resources/resource.rc"      
+)
 
-if (CMAKE_VERSION VERSION_GREATER 3.12)
-  set_property(TARGET Rastreador PROPERTY CXX_STANDARD 20)
-endif()
+# C++ 표준
+set_property(TARGET Rastreador PROPERTY CXX_STANDARD 20)
 
+# 컴파일 옵션 (Debug / Release)
+target_compile_options(Rastreador PRIVATE
+    $<$<CONFIG:Debug>:/Od /Zi /fsanitize=address>
+    $<$<CONFIG:Release>:/O2>
+)
 
-# TODO: 필요한 경우 테스트를 추가하고 대상을 설치합니다.
-target_link_libraries(Rastreador PRIVATE pdh iphlpapi psapi ws2_32 tdh advapi32)
+# 링크 라이브러리
+target_link_libraries(Rastreador PRIVATE
+    pdh
+    iphlpapi
+    psapi
+    ws2_32
+    tdh
+    advapi32
+    gdiplus
+)

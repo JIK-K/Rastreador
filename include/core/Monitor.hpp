@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "collector/SystemMonitor.hpp"
 #include "collector/ProcessMonitor.hpp"
 #include "analyzer/BottleneckAnalyzer.hpp"
@@ -42,8 +42,4 @@ private:
 	std::atomic<bool> m_running{ false };
 	std::thread m_collectThread;
 	std::thread m_displayThread;
-
-	IDisplay* m_overlayDisplay = nullptr;
-	TrayIcon* m_tray = nullptr;
-	std::thread   m_trayThread;
 };

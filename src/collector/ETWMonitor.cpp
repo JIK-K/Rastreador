@@ -1,11 +1,10 @@
-﻿#include "collector/ETWMonitor.hpp"
+#include "collector/ETWMonitor.hpp"
 #include <iostream>
 #include <evntprov.h>
 
 std::map<DWORD, ULONG64> ETWMonitor::s_pidBytes[2];
 std::mutex ETWMonitor::s_mutex;
 int ETWMonitor::s_activeIdx = 0;
-const wchar_t* ETWMonitor::SESSION_NAME = L"RastreadorETW";
 
 // ETW가 추적 할 커널 네트워크 이벤트
 // MS - Windows - Kernel - Network
@@ -73,9 +72,6 @@ bool ETWMonitor::start() {
         return false;
     }
 
-
-    static TRACEHANDLE s_hTrace;
-    s_hTrace = m_hTrace;
 
     m_hThread = CreateThread(nullptr, 0,
         [](LPVOID param) -> DWORD {

@@ -93,9 +93,7 @@ void OverlayDisplay::render(const CollectorData& sysData,
 
 	{
 		std::lock_guard<std::mutex> lock(m_dataMutex);
-		m_sysData = sysData;
 		m_procNet = procNet;
-		m_result = result;
 	}
 
 	// 창 다시 그리기
@@ -146,6 +144,21 @@ void OverlayDisplay::render(const CollectorData& sysData,
 	oss << L"CPU  " << sysData.cpuUsage << L" %";
 	drawText(g, oss.str(), 8, y, white); 
 	y += 18;
+
+	if (!procInfo.empty()) {
+		auto topCpu = std::max_element(procInfo.begin(), procInfo.end(),
+			[](const auto& a, const auto& b) {
+				return a.second.cpuUsage < b.second.cpuUsage;
+			});
+		if (topCpu->second.cpuUsage > 0.1f) {
+			std::wstring wname(topCpu->first.begin(), topCpu->first.end());
+			std::wostringstream cs;
+			cs << std::fixed << std::setprecision(1);
+			cs << L"  " << wname << L" " << topCpu->second.cpuUsage << L"%";
+			drawText(g, cs.str(), 8, y, yellow, 11.0f);
+			y += 15;
+		}
+	}
 
 	oss.str(L"");
 	oss << L"MEM  " << sysData.memUsage << L" GB";

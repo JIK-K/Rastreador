@@ -1,5 +1,4 @@
 ﻿#include "core/Monitor.hpp"
-#include "display/ConsoleDisplay.hpp"
 #include "display/OverlayDisplay.hpp"
 #include <iostream>
 

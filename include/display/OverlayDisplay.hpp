@@ -37,11 +37,9 @@ private:
 	std::thread m_msgThread;
 	std::atomic<bool> m_running{ false };
 
-	CollectorData m_sysData;
 	std::map<std::string, float> m_procNet;
-	AnalysisResult m_result;
 	std::mutex m_dataMutex;
 
-	static constexpr int OVERLAY_WIDTH = 220;
-	static constexpr int OVERLAY_HEIGHT = 160;
+	static constexpr int OVERLAY_WIDTH = 240;
+	static constexpr int OVERLAY_HEIGHT = 200;
 };
