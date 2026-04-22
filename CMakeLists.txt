@@ -28,13 +28,16 @@ add_executable(Rastreador
     "src/display/OverlayDisplay.cpp"
     "src/core/Monitor.cpp"
     "src/tray/TrayIcon.cpp"
-    "resources/resource.rc"      
+    "resources/resource.rc"
 )
 
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
 # C++ 표준
 set_property(TARGET Rastreador PROPERTY CXX_STANDARD 20)
+set_target_properties(Rastreador PROPERTIES
+    LINK_FLAGS "/MANIFESTUAC:\"level='requireAdministrator' uiAccess='false'\""
+)
 
 # 컴파일 옵션 (Debug / Release)
 target_compile_options(Rastreador PRIVATE
