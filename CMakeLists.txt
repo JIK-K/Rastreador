@@ -23,7 +23,7 @@ add_executable (Rastreador
 	"src/analyzer/BottleneckAnalyzer.cpp"
 	"src/display/ConsoleDisplay.cpp"
 	"src/display/OverlayDisplay.cpp"
-	"src/core/Monitor.cpp")
+	"src/core/Monitor.cpp" "src/tray/TrayIcon.cpp")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET Rastreador PROPERTY CXX_STANDARD 20)

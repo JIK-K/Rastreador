@@ -4,24 +4,23 @@
 #include <iostream>
 
 int main() {
-    std::cout << "[Rastreador]\n";
-    std::cout << "1. 콘솔 모드\n";
-    std::cout << "2. 오버레이 모드\n";
-    std::cout << "선택 (1/2): ";
+    OverlayDisplay overlayDisplay;
+    Monitor monitor(&overlayDisplay, 100.0f);
 
-    int choice = 1;
-    std::cin >> choice;
+    ShowWindow(GetConsoleWindow(), SW_HIDE);
 
-    if (choice == 2) {
-        OverlayDisplay display;
-        Monitor monitor(&display, 100.0f);
+    // Monitor 별도 스레드로 실행
+    std::thread monitorThread([&monitor]() {
         monitor.start();
-    }
-    else {
-        ConsoleDisplay display;
-        Monitor monitor(&display, 100.0f);
-        monitor.start();
-    }
+        });
+
+    // 트레이 아이콘 (메인 스레드에서 메시지 루프)
+    TrayIcon tray([&monitor, &monitorThread]() {
+        monitor.stop();
+        if (monitorThread.joinable()) monitorThread.join();
+        PostQuitMessage(0);
+        });
+    tray.onCreate();
 
     return 0;
 }

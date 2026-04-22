@@ -57,10 +57,6 @@ void ProcessMonitor::collect() {
                     //float memMB = static_cast<float>(pmc.PrivateUsage) / (1024.0f * 1024.0f);
                     newProcInfo[name].memUsage += memMB;
 
-                    //if (name == "chrome.exe") {
-                    //    std::cout << "chrome PID: " << pid
-                    //        << " mem: " << memMB << " MB\n";
-                    //}
                 }
                 CloseHandle(hProc);
             } while (Process32NextW(hSnap, &pe));

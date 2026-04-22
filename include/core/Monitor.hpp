@@ -3,6 +3,7 @@
 #include "collector/ProcessMonitor.hpp"
 #include "analyzer/BottleneckAnalyzer.hpp"
 #include "display/IDisplay.hpp"
+#include "tray/TrayIcon.hpp"
 #include <thread>
 #include <mutex>
 #include <atomic>
@@ -20,6 +21,7 @@ public:
 
 	void start();
 	void stop();
+
 private:
 	void collectLoop();
 	void displayLoop();
@@ -40,4 +42,8 @@ private:
 	std::atomic<bool> m_running{ false };
 	std::thread m_collectThread;
 	std::thread m_displayThread;
+
+	IDisplay* m_overlayDisplay = nullptr;
+	TrayIcon* m_tray = nullptr;
+	std::thread   m_trayThread;
 };
