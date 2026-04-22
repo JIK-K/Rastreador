@@ -31,6 +31,8 @@ add_executable(Rastreador
     "resources/resource.rc"      
 )
 
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
 # C++ 표준
 set_property(TARGET Rastreador PROPERTY CXX_STANDARD 20)
 
