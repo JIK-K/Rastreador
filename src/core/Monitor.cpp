@@ -31,12 +31,14 @@ void Monitor::collectLoop() {
 
 		CollectorData sysData = m_sysMon.getData();
 		auto procNet = m_procMon.getProcessNetUsage();
+		auto procInfo = m_procMon.getProcessInfo();
 		AnalysisResult result = m_analyzer.analyze(sysData, procNet, m_maxNetSpeed);
 
 		{
 			std::lock_guard<std::mutex> lock(m_mutex);
 			m_sysData = sysData;
 			m_procNet = procNet;
+			m_procInfo = procInfo;
 			m_result = result;
 		}
 
@@ -48,16 +50,18 @@ void Monitor::displayLoop() {
 	while (m_running) {
 		CollectorData sysData;
 		std::map<std::string, float> procNet;
+		std::map<std::string, ProcessInfo> procInfo;
 		AnalysisResult result;
 
 		{
 			std::lock_guard<std::mutex> lock(m_mutex);
 			sysData = m_sysData;
 			procNet = m_procNet;
+			procInfo = m_procInfo;
 			result = m_result;
 		}
 
-		m_display->render(sysData, procNet, result);
+		m_display->render(sysData, procNet, procInfo, result);
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 	}

@@ -22,10 +22,7 @@ public:
     CollectorData getData() const override;
 
     std::map<std::string, float> getProcessNetUsage() const;
-
-    std::map<DWORD, ULONG64> getETWBytes() {
-        return m_etw.getAndResetBytes();
-    }
+    std::map<std::string, ProcessInfo> getProcessInfo() const;
 
 private:
     std::string getProcessName(DWORD pid);
@@ -33,5 +30,9 @@ private:
 private:
     ETWMonitor m_etw;
     std::map<std::string, float> m_netPerProc;
+    std::map<std::string, ProcessInfo> m_procInfo;
     mutable std::mutex m_mutex;
+
+    std::map<DWORD, ULONGLONG> m_prevCpuTime;
+    ULONGLONG m_prevSysTime = 0;
 };

@@ -1,8 +1,9 @@
-﻿#pragma once
+#pragma once
 #include "collector/SystemMonitor.hpp"
 #include "collector/ProcessMonitor.hpp"
 #include "analyzer/BottleneckAnalyzer.hpp"
 #include "display/IDisplay.hpp"
+#include "tray/TrayIcon.hpp"
 #include <thread>
 #include <mutex>
 #include <atomic>
@@ -20,6 +21,7 @@ public:
 
 	void start();
 	void stop();
+
 private:
 	void collectLoop();
 	void displayLoop();
@@ -33,6 +35,7 @@ private:
 
 	CollectorData m_sysData;
 	std::map<std::string, float> m_procNet;
+	std::map<std::string, ProcessInfo> m_procInfo;
 	AnalysisResult m_result;
 
 	std::mutex m_mutex;

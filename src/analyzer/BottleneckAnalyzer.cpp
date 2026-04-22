@@ -36,17 +36,17 @@ AnalysisResult BottleneckAnalyzer::analyze(
 
 	switch (m_state) {
 	case AnalysisResult::State::NORMAL:
-		result.message = "정상";
+		result.message = "Normal";
 		break;
 	case AnalysisResult::State::NET_BOTTLENECK:
 		result.topProcess = findTopProcess(procNet);
-		result.message = result.topProcess.empty() ? "네트워크 포화" : result.topProcess + " 가 네트워크 점유 중";
+		result.message = result.topProcess.empty() ? "Network bottleneck" : result.topProcess + " is hogging the network";
 		break;
 	case AnalysisResult::State::CPU_BOTTLENECK:
-		result.message = "CPU 병목 - 백그라운드 프로세스 확인 필요";
+		result.message = "CPU bottleneck - check background processes";
 		break;
 	case AnalysisResult::State::MEM_BOTTLENECK:
-		result.message = "메모리 부족 - 다른 프로그램 종료 권장";
+		result.message = "Low memory - close other programs";
 		break;
 	}
 

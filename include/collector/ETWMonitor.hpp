@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <Windows.h>
 #include <evntrace.h>
 #include <evntcons.h>
@@ -39,9 +39,6 @@ private:
     static std::map<DWORD, ULONG64> s_pidBytes[2];
     static std::mutex s_mutex;
     static int s_activeIdx;
-
-    // 세션 이름
-    static const wchar_t* SESSION_NAME;
 
     BYTE* m_propBuf = nullptr;
     EVENT_TRACE_LOGFILE* m_pLogFile = nullptr;
