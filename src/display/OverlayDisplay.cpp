@@ -1,4 +1,4 @@
-﻿#include "display/OverlayDisplay.hpp"
+#include "display/OverlayDisplay.hpp"
 #include <sstream>
 #include <iomanip>
 
@@ -45,7 +45,8 @@ void OverlayDisplay::createWindow() {
 		x, y, OVERLAY_WIDTH, OVERLAY_HEIGHT,
 		nullptr, nullptr, hInst, nullptr
 	);
-
+	
+	SetWindowLongPtr(m_hwnd, GWLP_USERDATA, (LONG_PTR)this);
 	// 검정 배경을 투명으로
 	SetLayeredWindowAttributes(m_hwnd, RGB(0, 0, 0), 0, LWA_COLORKEY);
 
@@ -64,6 +65,12 @@ void OverlayDisplay::messageLoop() {
 }
 
 LRESULT CALLBACK OverlayDisplay::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+	if (msg == WM_USER_UPDATE) {
+		OverlayDisplay* pThis = (OverlayDisplay*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+		if (pThis)
+			pThis->doDraw();
+		return 0;
+	}
 	if (msg == WM_DESTROY) {
 		PostQuitMessage(0);
 		return 0;
@@ -93,7 +100,29 @@ void OverlayDisplay::render(const CollectorData& sysData,
 
 	{
 		std::lock_guard<std::mutex> lock(m_dataMutex);
+		m_sysData = sysData;
 		m_procNet = procNet;
+		m_procInfo = procInfo;
+		m_result = result;
+	}
+
+	PostMessage(m_hwnd, WM_USER_UPDATE, 0, 0);
+}
+
+void OverlayDisplay::doDraw() {
+	if (!m_hwnd) return;
+
+	CollectorData sysData;
+	std::map<std::string, float> procNet;
+	std::map<std::string, ProcessInfo> procInfo;
+	AnalysisResult result;
+
+	{
+		std::lock_guard<std::mutex> lock(m_dataMutex);
+		sysData = m_sysData;
+		procNet = m_procNet;
+		procInfo = m_procInfo;
+		result = m_result;
 	}
 
 	// 창 다시 그리기
@@ -109,7 +138,7 @@ void OverlayDisplay::render(const CollectorData& sysData,
 	DeleteObject(blackBrush);
 
 	// GDI Text
-	Gdiplus::Graphics g(memDC);;
+	Gdiplus::Graphics g(memDC);
 	g.SetTextRenderingHint(Gdiplus::TextRenderingHintAntiAlias);
 
 	float y = 8.0f;
@@ -126,17 +155,14 @@ void OverlayDisplay::render(const CollectorData& sysData,
 	y += 18;
 
 	// Process
-	{
-		std::lock_guard<std::mutex> lock(m_dataMutex);
-		for (auto const& [name, mbps] : m_procNet) {
-			if (mbps < 0.01f) continue;
-			std::wstring wname(name.begin(), name.end());
-			std::wostringstream ps;
-			ps << std::fixed << std::setprecision(2);
-			ps << L"  " << wname << L" " << mbps << L"MB/s";
-			drawText(g, ps.str(), 8, y, yellow, 11.0f);
-			y += 15;
-		}
+	for (auto const& [name, mbps] : procNet) {
+		if (mbps < 0.01f) continue;
+		std::wstring wname(name.begin(), name.end());
+		std::wostringstream ps;
+		ps << std::fixed << std::setprecision(2);
+		ps << L"  " << wname << L" " << mbps << L"MB/s";
+		drawText(g, ps.str(), 8, y, yellow, 11.0f);
+		y += 15;
 	}
 
 	// CPU / MEM
@@ -190,4 +216,3 @@ void OverlayDisplay::render(const CollectorData& sysData,
 	DeleteDC(memDC);
 	ReleaseDC(m_hwnd, hdc);
 }
-

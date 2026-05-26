@@ -147,11 +147,13 @@ VOID WINAPI ETWMonitor::eventCallback(PEVENT_RECORD pEvent) {
 }
 
 std::map<DWORD, ULONG64> ETWMonitor::getAndResetBytes() {
-    std::lock_guard<std::mutex> lock(s_mutex);
-    int readIdx = s_activeIdx;
-    s_activeIdx = 1 - s_activeIdx;
-
-    auto copy = s_pidBytes[readIdx];
+    int readIdx;
+    {
+        std::lock_guard<std::mutex> lock(s_mutex);
+        readIdx = s_activeIdx;
+        s_activeIdx = 1 - s_activeIdx;
+    }
+    std::map<DWORD, ULONG64> copy = std::move(s_pidBytes[readIdx]);
     s_pidBytes[readIdx].clear();
     return copy;
 }

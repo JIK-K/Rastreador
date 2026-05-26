@@ -11,6 +11,7 @@
 #pragma comment(lib, "gdiplus.lib")
 
 class OverlayDisplay : public IDisplay {
+	static constexpr UINT WM_USER_UPDATE = WM_USER + 1;
 public:
 	OverlayDisplay();
 	~OverlayDisplay();
@@ -30,6 +31,8 @@ private:
 		float x, float y, Gdiplus::Color color, float fontSize = 14.0f);
 
 	static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+	void doDraw();
 private:
 	HWND m_hwnd = nullptr;
 	ULONG_PTR m_gdiplusToken = 0;
@@ -42,4 +45,8 @@ private:
 
 	static constexpr int OVERLAY_WIDTH = 240;
 	static constexpr int OVERLAY_HEIGHT = 200;
+
+	CollectorData m_sysData;
+	std::map<std::string, ProcessInfo> m_procInfo;
+	AnalysisResult m_result;
 };
